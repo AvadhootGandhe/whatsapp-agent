@@ -3,7 +3,7 @@ const express = require("express");
 const axios = require("axios");
 
 const extractEvent = require("./gemini");
-const { createEvent, getEventsForDay, getEventsAtTime } = require("./calendar");
+const { createEvent, getEventsForDay, getEventsAtTime, findEventsByDescription, deleteEvent } = require("./calendar");
 
 // Validate required environment variables
 const requiredEnvVars = [
@@ -29,6 +29,9 @@ const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
+
+// Simple in-memory store for pending cancellations (in production, use a database)
+const pendingCancellations = new Map();
 
 const greetingPattern = /^hi\b|^hello\b|^hey\b|^good (morning|afternoon|evening)\b|^what'?s up\b|^yo\b|^sup\b|^bye\b|^see you\b|^later\b|^thanks?\b|^thank you\b|^ok\b|^okay\b/;
 const profanityPattern = /\b(bitch|fuck|damn|shit|asshole|stupid)\b/;
@@ -153,7 +156,12 @@ function buildNeedMoreDetailsReply(reason) {
 function getScheduleQueryIntent(message) {
   const normalized = message.toLowerCase();
   const availabilityPattern = /\b(do i have|am i free|anything at|something at|busy at|free at|free now|have anything)\b/i;
-  const summaryPattern = /\b(summary|summarize|show me today's events|show me todays events|what do i have|what's on|todays events|today's events|today's schedule|events today|schedule today|my schedule|agenda|what am i doing)\b/i;
+  const summaryPattern = /\b(summary|summaries|summarize|show me today's events|show me todays events|what do i have|what's on|todays events|today's events|today's schedule|events today|schedule today|my schedule|agenda|what am i doing|what is my schedule)\b/i;
+  const cancelPattern = /\b(cancel|delete|remove|cancelled|delete the|remove the)\b/i;
+
+  if (cancelPattern.test(normalized)) {
+    return "cancel";
+  }
 
   if (availabilityPattern.test(normalized)) {
     return "availability";
@@ -331,6 +339,69 @@ async function handleScheduleQuery(from, messageText, intent) {
   const date = parseQueryDate(messageText);
   const time = parseQueryTime(messageText);
 
+  if (intent === "cancel") {
+    // Extract event description from cancel message
+    const cancelPattern = /\b(cancel|delete|remove|cancelled|delete the|remove the)\b/i;
+    const eventDescription = messageText.replace(cancelPattern, "").trim();
+
+    if (!eventDescription) {
+      await sendWhatsAppMessage(
+        from,
+        "What event do you want to cancel? For example: _Cancel meeting with Avadhoot_"
+      );
+      return;
+    }
+
+    // Try to find events matching the description
+    const matchingEvents = await findEventsByDescription(eventDescription, date);
+
+    if (!matchingEvents.length) {
+      await sendWhatsAppMessage(
+        from,
+        `Couldn't find any events matching "${eventDescription}". Check your spelling or try a different description.`
+      );
+      return;
+    }
+
+    if (matchingEvents.length === 1) {
+      // Only one matching event, delete it
+      const event = matchingEvents[0];
+      const eventTitle = event.summary || "Untitled event";
+      const eventTime = formatEventTime(event);
+
+      try {
+        await deleteEvent(event.id);
+        await sendWhatsAppMessage(
+          from,
+          `✅ Cancelled: "${eventTitle}" at ${eventTime}`
+        );
+      } catch (err) {
+        await sendWhatsAppMessage(
+          from,
+          `❌ Sorry, I couldn't cancel "${eventTitle}". Please try again.`
+        );
+      }
+      return;
+    }
+
+    // Multiple matching events, ask for clarification
+    const eventList = matchingEvents.slice(0, 5).map((event, index) =>
+      `${index + 1}. ${formatEventSummary(event)}`
+    ).join("\n");
+
+    // Store pending cancellation for this user
+    pendingCancellations.set(from, {
+      events: matchingEvents,
+      timestamp: Date.now()
+    });
+
+    await sendWhatsAppMessage(
+      from,
+      `I found multiple events matching "${eventDescription}". Which one do you want to cancel?\n\n${eventList}\n\nReply with the number (1-${matchingEvents.length})`
+    );
+    return;
+  }
+
   if (intent === "availability") {
     if (!time) {
       await sendWhatsAppMessage(
@@ -419,6 +490,44 @@ app.post("/webhook", async (req, res) => {
     const messageText = messageObj.text.body.trim();
 
     console.log(`\n📩 Message from ${from}: "${messageText}"`);
+
+    // Check if this is a response to a pending cancellation
+    const pendingCancel = pendingCancellations.get(from);
+    if (pendingCancel && /^\d+$/.test(messageText.trim())) {
+      const choice = parseInt(messageText.trim()) - 1;
+      if (choice >= 0 && choice < pendingCancel.events.length) {
+        const event = pendingCancel.events[choice];
+        const eventTitle = event.summary || "Untitled event";
+        const eventTime = formatEventTime(event);
+
+        try {
+          await deleteEvent(event.id);
+          await sendWhatsAppMessage(
+            from,
+            `✅ Cancelled: "${eventTitle}" at ${eventTime}`
+          );
+        } catch (err) {
+          await sendWhatsAppMessage(
+            from,
+            `❌ Sorry, I couldn't cancel "${eventTitle}". Please try again.`
+          );
+        }
+      } else {
+        await sendWhatsAppMessage(
+          from,
+          `Invalid choice. Please reply with a number between 1 and ${pendingCancel.events.length}.`
+        );
+      }
+
+      // Clear the pending cancellation
+      pendingCancellations.delete(from);
+      return;
+    }
+
+    // Clean up expired pending cancellations (older than 5 minutes)
+    if (pendingCancel && Date.now() - pendingCancel.timestamp > 5 * 60 * 1000) {
+      pendingCancellations.delete(from);
+    }
 
     const scheduleIntent = getScheduleQueryIntent(messageText);
     if (scheduleIntent) {

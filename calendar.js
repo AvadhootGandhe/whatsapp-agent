@@ -113,8 +113,45 @@ async function getEventsAtTime(dateString, timeString) {
   return events.filter((event) => eventOverlapsTime(event, queryTime));
 }
 
+async function findEventsByDescription(description, dateString = null) {
+  let startDate, endDate;
+
+  if (dateString) {
+    startDate = new Date(dateString + "T00:00:00");
+    endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);
+  } else {
+    // Search in the next 7 days if no date specified
+    startDate = new Date();
+    endDate = new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+  }
+
+  const events = await listEvents(startDate, endDate);
+  const normalizedDesc = description.toLowerCase().trim();
+
+  return events.filter((event) => {
+    const eventTitle = (event.summary || "").toLowerCase();
+    return eventTitle.includes(normalizedDesc) ||
+           normalizedDesc.split(" ").some(word => eventTitle.includes(word));
+  });
+}
+
+async function deleteEvent(eventId) {
+  try {
+    await calendar.events.delete({
+      calendarId: "primary",
+      eventId: eventId,
+    });
+    return true;
+  } catch (err) {
+    console.error("❌ Google Calendar delete error:", err.message);
+    throw new Error(`Failed to delete calendar event: ${err.message}`);
+  }
+}
+
 module.exports = {
   createEvent,
   getEventsForDay,
   getEventsAtTime,
+  findEventsByDescription,
+  deleteEvent,
 };
