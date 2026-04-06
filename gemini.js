@@ -18,7 +18,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
  * @returns {Promise<object>}
  */
 async function classifyMessage(text) {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
   const today = new Date();
   const todayStr = formatDate(today);
@@ -40,7 +40,7 @@ INTENTS:
 
 RULES:
 - Relative dates ("today", "tomorrow", "next Monday", "this Friday") must be converted to YYYY-MM-DD.
-- Times must be 24-hour HH:MM format ("5 pm" → "17:00", "9:30 am" → "09:30"). Default time for create if unspecified: "09:00".
+- Times must be 24-hour HH:MM format ("5 pm" → "17:00", "9:30 am" → "09:30"). Default time for create if unspecified: "07:30".
 - Default date for create if unspecified: today (${todayStr}).
 - For "cancel_one", extract the event title/description the user mentioned (strip the cancel verb itself).
 - For "cancel_all" and "read", if no date mentioned, default to today.
