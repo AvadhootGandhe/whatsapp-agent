@@ -115,41 +115,41 @@ function needsMoreDetails(message) {
 
 function buildGreetingReply() {
   return (
-    "Hey buddy! What are you planning? " +
+    "Hey buddy! 💯 What are you planning? 🤔 " +
     "I only create calendar events, so hit me with something like:\n" +
-    "_Meeting with Avadhoot tomorrow at 4 pm_"
+    "_Meeting with Avadhoot tomorrow at 4 pm_ ⏰"
   );
 }
 
 function buildNeedMoreDetailsReply(reason) {
   if (reason === "title") {
     return (
-      "⚠️ I see a date or time, but I need to know what to schedule. " +
+      "⚠️ I see a date or time, but I need to know what to schedule 😅. " +
       "Drop the subject like:\n" +
-      "_Meeting with Avadhoot tomorrow at 4 pm_"
+      "_Meeting with Avadhoot tomorrow at 4 pm_ ⏰"
     );
   }
 
   if (reason === "date") {
     return (
-      "⚠️ I can help schedule it, but I need the date. " +
+      "⚠️ I can help schedule it, but I need the date 📅. " +
       "Tell me when it should happen, for example:\n" +
-      "_Meeting with Avadhoot tomorrow at 4 pm_"
+      "_Meeting with Avadhoot tomorrow at 4 pm_ ⏰"
     );
   }
 
   if (reason === "time") {
     return (
-      "⚠️ I can help schedule it, but I need the time. " +
+      "⚠️ I can help schedule it, but I need the time 🕐. " +
       "Tell me when it should happen, for example:\n" +
-      "_Meeting with Avadhoot tomorrow at 4 pm_"
+      "_Meeting with Avadhoot tomorrow at 4 pm_ ⏰"
     );
   }
 
   return (
-    "⚠️ I can schedule events, but I need a clear date and time to do it. " +
+    "⚠️ I can schedule events, but I need a clear date and time to do it 😬. " +
     "Send me something like:\n" +
-    "_Meeting with Avadhoot tomorrow at 4 pm_"
+    "_Meeting with Avadhoot tomorrow at 4 pm_ ⏰"
   );
 }
 
@@ -332,7 +332,7 @@ function formatEventTime(event) {
 function formatEventSummary(event) {
   const time = formatEventTime(event);
   const title = event.summary || "Untitled event";
-  return `• ${time} — ${title}`;
+  return `• ${time} — ${title} 📅`;
 }
 
 async function handleScheduleQuery(from, messageText, intent) {
@@ -347,7 +347,7 @@ async function handleScheduleQuery(from, messageText, intent) {
     if (!eventDescription) {
       await sendWhatsAppMessage(
         from,
-        "What event do you want to cancel? For example: _Cancel meeting with Avadhoot_"
+        "What event do you want to cancel? 🤔 For example: _Cancel meeting with Avadhoot_ ❌"
       );
       return;
     }
@@ -358,7 +358,7 @@ async function handleScheduleQuery(from, messageText, intent) {
     if (!matchingEvents.length) {
       await sendWhatsAppMessage(
         from,
-        `Couldn't find any events matching "${eventDescription}". Check your spelling or try a different description.`
+        `Couldn't find any events matching "${eventDescription}" 😕. Check your spelling or try a different description. 🔍`
       );
       return;
     }
@@ -373,12 +373,12 @@ async function handleScheduleQuery(from, messageText, intent) {
         await deleteEvent(event.id);
         await sendWhatsAppMessage(
           from,
-          `✅ Cancelled: "${eventTitle}" at ${eventTime}`
+          `✅ Cancelled: "${eventTitle}" at ${eventTime} 🚫`
         );
       } catch (err) {
         await sendWhatsAppMessage(
           from,
-          `❌ Sorry, I couldn't cancel "${eventTitle}". Please try again.`
+          `❌ Sorry, I couldn't cancel "${eventTitle}" 😔. Please try again.`
         );
       }
       return;
@@ -397,7 +397,7 @@ async function handleScheduleQuery(from, messageText, intent) {
 
     await sendWhatsAppMessage(
       from,
-      `I found multiple events matching "${eventDescription}". Which one do you want to cancel?\n\n${eventList}\n\nReply with the number (1-${matchingEvents.length})`
+      `I found multiple events matching "${eventDescription}" 🤷‍♂️. Which one do you want to cancel?\n\n${eventList}\n\nReply with the number (1-${matchingEvents.length}) 🔢`
     );
     return;
   }
@@ -406,7 +406,7 @@ async function handleScheduleQuery(from, messageText, intent) {
     if (!time) {
       await sendWhatsAppMessage(
         from,
-        "Tell me the time you want to check, for example: _Do I have something at 4pm today?_"
+        "Tell me the time you want to check ⏰, for example: _Do I have something at 4pm today?_ 🤔"
       );
       return;
     }
@@ -415,7 +415,7 @@ async function handleScheduleQuery(from, messageText, intent) {
     if (!events.length) {
       await sendWhatsAppMessage(
         from,
-        `You're free at ${time} ${prettyDate(date)} — no events found in your calendar.`
+        `You're free at ${time} ${prettyDate(date)} — no events found in your calendar 😎.`
       );
       return;
     }
@@ -423,7 +423,7 @@ async function handleScheduleQuery(from, messageText, intent) {
     const summary = events.map(formatEventSummary).join("\n");
     await sendWhatsAppMessage(
       from,
-      `Yep, you're booked at ${time} ${prettyDate(date)}:\n${summary}`
+      `Yep, you're booked at ${time} ${prettyDate(date)} 📅:\n${summary}`
     );
     return;
   }
@@ -432,7 +432,7 @@ async function handleScheduleQuery(from, messageText, intent) {
   if (!events.length) {
     await sendWhatsAppMessage(
       from,
-      `Nice, ${prettyDate(date)} looks clear. You don't have any events scheduled.`
+      `Nice, ${prettyDate(date)} looks clear 😌. You don't have any events scheduled.`
     );
     return;
   }
@@ -440,7 +440,7 @@ async function handleScheduleQuery(from, messageText, intent) {
   const summary = events.map(formatEventSummary).join("\n");
   await sendWhatsAppMessage(
     from,
-    `Alright, here's what you've got ${prettyDate(date)}:\n${summary}`
+    `Alright, here's what you've got ${prettyDate(date)} 📋:\n${summary}`
   );
 }
 
@@ -515,7 +515,7 @@ app.post("/webhook", async (req, res) => {
       } else {
         await sendWhatsAppMessage(
           from,
-          `Invalid choice. Please reply with a number between 1 and ${pendingCancel.events.length}.`
+          `Invalid choice 😕. Please reply with a number between 1 and ${pendingCancel.events.length}. 🔢`
         );
       }
 
@@ -570,11 +570,11 @@ app.post("/webhook", async (req, res) => {
 
     // Step 3: Reply to the user on WhatsApp
     const replyText =
-      `✅ Done! I've added this to your Google Calendar:\n\n` +
+      `✅ Done! I've added this to your Google Calendar 📅:\n\n` +
       `📌 *${eventData.title}*\n` +
       `📅 Date: ${eventData.date}\n` +
       `🕐 Time: ${eventData.time}\n\n` +
-      `🔗 ${eventLink}`;
+      `🔗 ${eventLink} ✨`;
 
     await sendWhatsAppMessage(from, replyText);
     console.log(`✅ Reply sent to ${from}`);
@@ -587,7 +587,7 @@ app.post("/webhook", async (req, res) => {
       if (from) {
         await sendWhatsAppMessage(
           from,
-          "⚠️ Sorry, I couldn't create the event. Please try again with a clearer message.\n\nExample: _Meeting with John tomorrow at 3 pm_"
+          "⚠️ Sorry, I couldn't create the event 😔. Please try again with a clearer message.\n\nExample: _Meeting with John tomorrow at 3 pm_ ⏰"
         );
       }
     } catch (_) {
