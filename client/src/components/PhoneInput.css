@@ -1,0 +1,20 @@
+.phone-input-wrapper {
+  display: flex;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.phone-country-select {
+  width: 110px;
+  flex-shrink: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.phone-number-input {
+  flex: 1;
+  letter-spacing: 0.05em;
+  font-size: 1.05rem;
+}

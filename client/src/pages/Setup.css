@@ -1,0 +1,95 @@
+.setup-container {
+  max-width: 480px;
+  width: 100%;
+}
+
+.setup-card {
+  padding: var(--space-2xl);
+}
+
+.setup-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.setup-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: var(--space-sm);
+}
+
+.setup-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.setup-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.setup-desc {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.setup-step .btn {
+  width: 100%;
+}
+
+.setup-check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  color: var(--success);
+  font-weight: 500;
+}
+
+.check-icon {
+  font-size: 1rem;
+}
+
+.setup-success {
+  text-align: center;
+  align-items: center;
+}
+
+.success-icon-big {
+  font-size: 3.5rem;
+  animation: float 2s ease-in-out infinite;
+}
+
+.setup-success h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.setup-success p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.setup-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--error-bg);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  color: var(--error);
+  font-size: 0.9rem;
+  margin-top: var(--space-md);
+}
