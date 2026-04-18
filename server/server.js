@@ -31,6 +31,16 @@ if (missingVars.length > 0) {
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+const googleAuthRedirectUri =
+  process.env.GOOGLE_AUTH_REDIRECT_URI ||
+  `${process.env.BACKEND_URL}/api/auth/google/callback`;
+const googleCalendarRedirectUri =
+  process.env.GOOGLE_CALENDAR_REDIRECT_URI ||
+  `${process.env.BACKEND_URL}/api/services/calendar-buddy/callback`;
+
+// When running behind ngrok or other proxies, trust the proxy headers for rate limiting.
+app.set("trust proxy", 1);
+
 // ── Middleware ─────────────────────────────────────────────────────────────────
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(
@@ -78,6 +88,8 @@ async function start() {
   app.listen(PORT, () => {
     console.log(`\n🚀 Server running on http://localhost:${PORT}`);
     console.log(`📡 Webhook endpoint: ${process.env.BACKEND_URL}/webhook`);
+    console.log(`🔐 Google auth callback URI: ${googleAuthRedirectUri}`);
+    console.log(`📅 Google calendar callback URI: ${googleCalendarRedirectUri}`);
     console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL}\n`);
   });
 }

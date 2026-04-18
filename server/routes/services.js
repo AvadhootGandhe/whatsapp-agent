@@ -10,10 +10,14 @@ const router = express.Router();
 const CALENDAR_SCOPES = ["https://www.googleapis.com/auth/calendar"];
 
 function createOAuth2Client() {
+  const redirectUri =
+    process.env.GOOGLE_CALENDAR_REDIRECT_URI ||
+    `${process.env.BACKEND_URL}/api/services/calendar-buddy/callback`;
+
   return new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    `${process.env.BACKEND_URL}/api/services/calendar-buddy/callback`
+    redirectUri
   );
 }
 
@@ -137,7 +141,13 @@ router.post("/calendar-buddy/activate", requireAuth, async (req, res) => {
     });
   } catch (err) {
     console.error("❌ Activation error:", err.message);
-    res.status(500).json({ error: "Failed to activate service" });
+    if (err.response?.data) {
+      console.error("❌ WhatsApp API response:", err.response.data);
+    }
+    res.status(500).json({
+      error: "Failed to activate service",
+      details: err.response?.data || err.message,
+    });
   }
 });
 

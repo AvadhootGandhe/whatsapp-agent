@@ -149,6 +149,13 @@ npm install
 7. Copy **Client ID** and **Client Secret** → save for `.env`
 
 > ⚠️ **Important:** You need TWO redirect URIs — one for login, one for calendar authorization. They're different OAuth flows.
+>
+> If you are using ngrok only for the WhatsApp webhook, you can keep the OAuth redirect URIs pointing at `localhost` and add these optional vars to the backend `.env`:
+>
+> ```env
+> GOOGLE_AUTH_REDIRECT_URI=http://localhost:3001/api/auth/google/callback
+> GOOGLE_CALENDAR_REDIRECT_URI=http://localhost:3001/api/services/calendar-buddy/callback
+> ```
 
 ---
 
@@ -238,6 +245,11 @@ GEMINI_API_KEY=AIzaSyxxxxxxxxxxxxxxxxx
 WHATSAPP_TOKEN=EAAxxxxxxxxxxxxxxxxx
 PHONE_NUMBER_ID=114534xxxxxxxxx
 VERIFY_TOKEN=my_services_verify_token_2024
+WHATSAPP_TEMPLATE_NAME=welcome_calendar_buddy
+
+# Google OAuth override (optional)
+GOOGLE_AUTH_REDIRECT_URI=http://localhost:3001/api/auth/google/callback
+GOOGLE_CALENDAR_REDIRECT_URI=http://localhost:3001/api/services/calendar-buddy/callback
 
 # URLs (local dev)
 BACKEND_URL=http://localhost:3001
@@ -604,7 +616,10 @@ WhatsApp requires approved templates to initiate conversations (the "hi" activat
      Let's get started! 🚀
      ```
 3. Submit for review (usually approved within minutes for utility templates)
-4. Update `server/services/whatsapp.js` to use template API for activation message
+4. Add this env var to your backend `.env`:
+   ```env
+   WHATSAPP_TEMPLATE_NAME=welcome_calendar_buddy
+   ```
 
 > **Note:** After the user replies to your template message, you have a 24-hour conversation window to send free-form messages. The webhook-based replies (Calendar Buddy responses) fall within this window.
 
