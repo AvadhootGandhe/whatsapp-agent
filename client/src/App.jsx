@@ -4,6 +4,8 @@ import Login from "./pages/Login";
 import Services from "./pages/Services";
 import Setup from "./pages/Setup";
 import Dashboard from "./pages/Dashboard";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Terms from "./pages/Terms";
 
 function App() {
   return (
@@ -42,6 +44,8 @@ function App() {
         />
 
         {/* Default redirect */}
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<Terms />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
