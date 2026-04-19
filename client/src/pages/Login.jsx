@@ -35,6 +35,15 @@ export default function Login() {
 
           <div className="login-footer">
             <p>Secure authentication powered by Google OAuth 2.0</p>
+            
+            <div style={{ marginTop: "10px" }}>
+              <a href="/privacy-policy" style={{ marginRight: "15px" }}>
+                Privacy Policy
+              </a>
+              <a href="/terms">
+                Terms of Service
+              </a>
+            </div>
           </div>
         </div>
 
