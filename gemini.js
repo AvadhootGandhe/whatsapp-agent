@@ -18,7 +18,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
  * @returns {Promise<object>}
  */
 async function classifyMessage(text) {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5" });
 
   const today = new Date();
   const todayStr = formatDate(today);
