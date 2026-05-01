@@ -1,6 +1,6 @@
 const { google } = require("googleapis");
 
-const TIMEZONE = process.env.TIMEZONE || "Asia/Kolkata";
+const TIMEZONE = "Asia/Kolkata";
 
 /**
  * Create an OAuth2 client for a specific user's refresh token.
