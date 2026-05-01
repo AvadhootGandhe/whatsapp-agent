@@ -40,7 +40,7 @@ async function sendWhatsAppTemplateMessage(to, templateName) {
     type: "template",
     template: {
       name: templateName,
-      language: { code: "en_US" },
+      language: { code: "en" },
     },
   };
 

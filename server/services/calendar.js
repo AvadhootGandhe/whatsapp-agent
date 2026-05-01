@@ -22,7 +22,7 @@ function getCalendar(refreshToken) {
 }
 
 /**
- * Creates a 1-hour Google Calendar event.
+ * Creates a Google Calendar event at the specified time (no duration).
  * @param {{ title: string, date: string, time: string }} data
  * @param {string} refreshToken - User's Google Calendar refresh token
  * @returns {Promise<string>} - The created event's HTML link
@@ -35,8 +35,8 @@ async function createEvent(data, refreshToken) {
     throw new Error(`Invalid date/time: ${data.date} ${data.time}`);
   }
 
-  // Default duration: 1 hour
-  const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000);
+  // No duration: event at the exact time
+  const endDateTime = startDateTime;
 
   const event = {
     summary: data.title,
