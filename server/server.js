@@ -81,6 +81,8 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+const { startReminderScheduler } = require("./services/reminder");
+
 // ── Start ─────────────────────────────────────────────────────────────────────
 async function start() {
   await connectDB();
@@ -91,6 +93,9 @@ async function start() {
     console.log(`🔐 Google auth callback URI: ${googleAuthRedirectUri}`);
     console.log(`📅 Google calendar callback URI: ${googleCalendarRedirectUri}`);
     console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL}\n`);
+
+    // Start background reminder scheduler
+    startReminderScheduler();
   });
 }
 

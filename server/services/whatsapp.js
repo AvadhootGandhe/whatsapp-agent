@@ -95,4 +95,19 @@ async function sendActivationMessage(phone) {
   return sendWhatsAppMessage(phone, msg);
 }
 
-module.exports = { sendWhatsAppMessage, sendActivationMessage };
+/**
+ * Send a goodbye message when user cancels Calendar Buddy.
+ */
+async function sendCancellationMessage(phone) {
+  const msg =
+    `Hey there 😢\n\n` +
+    `Your *Calendar Buddy* service has been cancelled.\n\n` +
+    `We'll really miss you! 💔 It was great helping you manage your calendar.\n\n` +
+    `If you ever want to come back, we'll be right here waiting for you with open arms! 🤗\n\n` +
+    `Hope to see you again soon! 🌟\n\n` +
+    `Take care! 👋`;
+
+  return sendWhatsAppMessage(phone, msg);
+}
+
+module.exports = { sendWhatsAppMessage, sendActivationMessage, sendCancellationMessage };

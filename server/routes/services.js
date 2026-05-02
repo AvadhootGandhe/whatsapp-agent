@@ -2,7 +2,7 @@ const express = require("express");
 const { google } = require("googleapis");
 const User = require("../models/User");
 const requireAuth = require("../middleware/auth");
-const { sendActivationMessage } = require("../services/whatsapp");
+const { sendActivationMessage, sendCancellationMessage } = require("../services/whatsapp");
 
 const router = express.Router();
 
@@ -148,6 +148,49 @@ router.post("/calendar-buddy/activate", requireAuth, async (req, res) => {
       error: "Failed to activate service",
       details: err.response?.data || err.message,
     });
+  }
+});
+
+// ── POST /api/services/calendar-buddy/cancel → Cancel/deactivate service ────
+router.post("/calendar-buddy/cancel", requireAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (!user.activeServices.includes("calendar-buddy")) {
+      return res.status(400).json({ error: "Service is not active" });
+    }
+
+    // Send goodbye message on WhatsApp before clearing phone
+    if (user.phone) {
+      try {
+        await sendCancellationMessage(user.phone);
+      } catch (msgErr) {
+        console.warn("⚠️ Could not send cancellation message:", msgErr.message);
+      }
+    }
+
+    // Remove service from active list
+    user.activeServices = user.activeServices.filter(
+      (s) => s !== "calendar-buddy"
+    );
+    // Clear stored credentials so they can re-setup fresh
+    user.phone = null;
+    user.googleCalendarRefreshToken = null;
+    await user.save();
+
+    console.log(`🛑 Calendar Buddy cancelled for ${user.email}`);
+
+    res.json({
+      message: "Calendar Buddy has been cancelled",
+      activeServices: user.activeServices,
+    });
+  } catch (err) {
+    console.error("❌ Cancel error:", err.message);
+    res.status(500).json({ error: "Failed to cancel service" });
   }
 });
 

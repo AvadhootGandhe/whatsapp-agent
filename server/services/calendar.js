@@ -162,6 +162,7 @@ async function deleteEvent(refreshToken, eventId) {
 
 module.exports = {
   createEvent,
+  listEvents,
   getEventsForDay,
   getEventsAtTime,
   findEventsByDescription,
