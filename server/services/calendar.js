@@ -45,7 +45,7 @@ async function createEvent(data, refreshToken) {
       timeZone: TIMEZONE,
     },
     end: {
-      dateTime: endDateTime.toISOString(),
+      dateTime: startDateTime.toISOString(),
       timeZone: TIMEZONE,
     },
     reminders: {
@@ -74,7 +74,7 @@ async function createEvent(data, refreshToken) {
 function makeLocalDateTime(dateString, timeString) {
   const [year, month, day] = dateString.split("-").map(Number);
   const [hour, minute] = timeString.split(":").map(Number);
-  return new Date(year, month - 1, day, hour, minute);
+  return new Date(`${dateString}T${timeString}:00+05:30`);
 }
 
 async function listEvents(refreshToken, startDateTime, endDateTime) {
@@ -126,7 +126,7 @@ async function findEventsByDescription(refreshToken, description, dateString = n
   let startDate, endDate;
 
   if (dateString) {
-    startDate = new Date(dateString + "T00:00:00");
+    startDate = new Date(dateString + "T00:00:00+05:30");
     endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);
   } else {
     // Search in the next 7 days if no date specified
