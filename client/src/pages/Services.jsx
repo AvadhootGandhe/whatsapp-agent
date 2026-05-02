@@ -8,6 +8,7 @@ export default function Services() {
   const [services, setServices] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [cancellingId, setCancellingId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,10 +30,29 @@ export default function Services() {
   }, [navigate]);
 
   const handleServiceClick = (service) => {
+    if (cancellingId) return; // Don't navigate while cancelling
     if (user?.activeServices?.includes(service.id)) {
       navigate("/dashboard");
     } else {
       navigate(`/setup/${service.id}`);
+    }
+  };
+
+  const handleCancel = async (service) => {
+    if (cancellingId) return;
+    setCancellingId(service.id);
+
+    try {
+      const result = await api.cancelCalendarBuddy();
+      // Update user state to reflect the cancelled service
+      setUser((prev) => ({
+        ...prev,
+        activeServices: result.activeServices || prev.activeServices.filter((s) => s !== service.id),
+      }));
+    } catch (err) {
+      console.error("Failed to cancel service:", err.message);
+    } finally {
+      setCancellingId(null);
     }
   };
 
@@ -58,6 +78,8 @@ export default function Services() {
             service={service}
             active={user?.activeServices?.includes(service.id)}
             onClick={() => handleServiceClick(service)}
+            onCancel={handleCancel}
+            cancelling={cancellingId === service.id}
           />
         ))}
       </div>

@@ -1,6 +1,11 @@
 import "./ServiceCard.css";
 
-export default function ServiceCard({ service, onClick, active }) {
+export default function ServiceCard({ service, onClick, active, onCancel, cancelling }) {
+  const handleCancel = (e) => {
+    e.stopPropagation(); // Don't trigger the card click
+    if (onCancel) onCancel(service);
+  };
+
   return (
     <div
       className={`service-card glass-card ${active ? "service-card-active" : ""}`}
@@ -12,10 +17,27 @@ export default function ServiceCard({ service, onClick, active }) {
         <h3 className="service-card-name">{service.name}</h3>
         <p className="service-card-desc">{service.description}</p>
         {active && (
-          <span className="badge badge-success">
-            <span className="status-dot status-dot-active"></span>
-            Active
-          </span>
+          <div className="service-card-actions">
+            <span className="badge badge-success">
+              <span className="status-dot status-dot-active"></span>
+              Active
+            </span>
+            <button
+              className="btn-cancel"
+              onClick={handleCancel}
+              disabled={cancelling}
+              id={`cancel-${service.id}`}
+            >
+              {cancelling ? (
+                <>
+                  <span className="btn-cancel-spinner"></span>
+                  Cancelling…
+                </>
+              ) : (
+                "Cancel"
+              )}
+            </button>
+          </div>
         )}
       </div>
       <div className="service-card-arrow">→</div>

@@ -38,6 +38,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ phone }),
     }),
+  cancelCalendarBuddy: () =>
+    apiFetch("/api/services/calendar-buddy/cancel", {
+      method: "POST",
+    }),
 
   // Health
   health: () => apiFetch("/api/health"),

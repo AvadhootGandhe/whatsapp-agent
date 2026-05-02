@@ -104,3 +104,56 @@
   background: var(--success);
   box-shadow: 0 0 8px var(--success);
 }
+
+/* ── Cancel Service Section ────────────────────────────────────────────────── */
+.dashboard-card-cancel {
+  padding: var(--space-xl);
+  border-top: 1px solid var(--border-glass);
+  display: flex;
+  justify-content: center;
+}
+
+.btn-cancel-service {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--error);
+  background: var(--error-bg);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  letter-spacing: 0.01em;
+}
+
+.btn-cancel-service:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.15);
+  transform: translateY(-2px);
+}
+
+.btn-cancel-service:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-cancel-service:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-cancel-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(239, 68, 68, 0.3);
+  border-top-color: var(--error);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}

@@ -7,6 +7,7 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [cancelling, setCancelling] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,6 +31,19 @@ export default function Dashboard() {
     }
     load();
   }, [navigate]);
+
+  const handleCancel = async () => {
+    if (cancelling) return;
+    setCancelling(true);
+    try {
+      await api.cancelCalendarBuddy();
+      // Navigate back to services page so they can re-activate
+      navigate("/services");
+    } catch (err) {
+      console.error("Failed to cancel service:", err.message);
+      setCancelling(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -93,6 +107,25 @@ export default function Dashboard() {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Cancel Service Section */}
+          <div className="dashboard-card-cancel">
+            <button
+              className="btn-cancel-service"
+              onClick={handleCancel}
+              disabled={cancelling}
+              id="cancel-calendar-buddy"
+            >
+              {cancelling ? (
+                <>
+                  <span className="btn-cancel-spinner"></span>
+                  Cancelling…
+                </>
+              ) : (
+                "Cancel Service"
+              )}
+            </button>
           </div>
         </div>
       </div>
