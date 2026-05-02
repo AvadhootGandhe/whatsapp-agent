@@ -29,14 +29,14 @@ function getCalendar(refreshToken) {
  */
 async function createEvent(data, refreshToken) {
   const calendar = getCalendar(refreshToken);
-  const startDateTime = new Date(`${data.date}T${data.time}:00`);
+  const startDateTime = new Date(`${data.date}T${data.time}:00+05:30`);
 
   if (isNaN(startDateTime.getTime())) {
     throw new Error(`Invalid date/time: ${data.date} ${data.time}`);
   }
 
   // No duration: event at the exact time
-  const endDateTime = startDateTime;
+  const endDateTime = new Date(startDateTime.getTime() + 30 * 60 * 1000); // +30 min
 
   const event = {
     summary: data.title,
@@ -109,14 +109,14 @@ function eventOverlapsTime(event, queryDateTime) {
 }
 
 async function getEventsForDay(refreshToken, dateString) {
-  const dayStart = new Date(dateString + "T00:00:00");
+  
   const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
   return listEvents(refreshToken, dayStart, dayEnd);
 }
 
 async function getEventsAtTime(refreshToken, dateString, timeString) {
   const queryTime = makeLocalDateTime(dateString, timeString);
-  const dayStart = new Date(dateString + "T00:00:00");
+  const dayStart = new Date(dateString + "T00:00:00+05:30");
   const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
   const events = await listEvents(refreshToken, dayStart, dayEnd);
   return events.filter((event) => eventOverlapsTime(event, queryTime));
