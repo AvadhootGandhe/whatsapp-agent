@@ -36,7 +36,7 @@ async function createEvent(data, refreshToken) {
   }
 
   // No duration: event at the exact time
-  const endDateTime = new Date(startDateTime.getTime() + 30 * 60 * 1000); // +30 min
+  const endDateTime = startDateTime.getTime() // +30 min
 
   const event = {
     summary: data.title,
@@ -45,7 +45,7 @@ async function createEvent(data, refreshToken) {
       timeZone: TIMEZONE,
     },
     end: {
-      dateTime: startDateTime.toISOString(),
+      dateTime: endDateTime.toISOString(),
       timeZone: TIMEZONE,
     },
     reminders: {
