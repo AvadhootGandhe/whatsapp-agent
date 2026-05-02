@@ -36,7 +36,7 @@ async function createEvent(data, refreshToken) {
   }
 
   // No duration: event at the exact time
-  const endDateTime = new Date(startDateTime.getTime()); // +30 min
+  const endDateTime = new Date(startDateTime.getTime() + 30 * 60 * 1000); // +30 min
 
   const event = {
     summary: data.title,
@@ -74,7 +74,7 @@ async function createEvent(data, refreshToken) {
 function makeLocalDateTime(dateString, timeString) {
   const [year, month, day] = dateString.split("-").map(Number);
   const [hour, minute] = timeString.split(":").map(Number);
-  return new Date(`${dateString}T${timeString}:00+05:30`);
+  return new Date(year, month - 1, day, hour, minute);
 }
 
 async function listEvents(refreshToken, startDateTime, endDateTime) {
@@ -109,7 +109,7 @@ function eventOverlapsTime(event, queryDateTime) {
 }
 
 async function getEventsForDay(refreshToken, dateString) {
-  
+  const dayStart = new Date(dateString + "T00:00:00+05:30"); // ✅ Fixed: dayStart was missing
   const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
   return listEvents(refreshToken, dayStart, dayEnd);
 }
