@@ -315,9 +315,13 @@ function formatEventTime(event) {
   if (!start) return "Unknown time";
   if (event.start.date) return "All day";
   const dateObj = new Date(start);
-  const hours = String(dateObj.getHours()).padStart(2, "0");
-  const minutes = String(dateObj.getMinutes()).padStart(2, "0");
-  return `${hours}:${minutes}`;
+  const timeString = dateObj.toLocaleString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Kolkata",
+  });
+  return timeString;
 }
 
 function formatEventSummary(event) {

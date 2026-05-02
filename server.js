@@ -128,8 +128,7 @@ app.post("/webhook", async (req, res) => {
           `✅ Done! Added to your Google Calendar 📅:\n\n` +
           `📌 *${classified.title}*\n` +
           `📅 Date: ${classified.date}\n` +
-          `🕐 Time: ${classified.time}\n\n` +
-          `🔗 ${eventLink} ✨`
+          `🕐 Time: ${classified.time}\n\n`
         );
         break;
       }
