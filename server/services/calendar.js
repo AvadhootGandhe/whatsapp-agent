@@ -36,7 +36,7 @@ async function createEvent(data, refreshToken) {
   }
 
   // No duration: event at the exact time
-  const endDateTime = startDateTime.getTime() // +30 min
+  const endDateTime = new Date(startDateTime.getTime()); // +30 min
 
   const event = {
     summary: data.title,
